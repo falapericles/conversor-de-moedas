@@ -9,9 +9,10 @@ import java.net.http.HttpResponse;
 import java.util.Scanner;
 
 public class Main {
-
-    private static final String API_URL = "https://v6.exchangerate-api.com/v6/ae8af4f8c32e428bdaee512d/latest/USD";
-    private static final String[] CURRENCIES = {"ARS", "BOB", "BRL", "CLP", "COP", "USD"};
+    
+    //preencher com a URL da API
+    private static final String API_URL = " ";
+    private static final String[] MOEDAS = {"ARS", "BOB", "BRL", "CLP", "COP", "USD"};
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -34,49 +35,52 @@ public class Main {
             }
 
             System.out.println("Digite o valor a ser convertido:");
-            double value = scanner.nextDouble();
+            double valor = scanner.nextDouble();
 
-            double convertedValue = convertCurrency(option, value);
-            if (convertedValue != -1) {
-                System.out.println("Valor convertido: " + convertedValue);
+            // fazendo a conversão da moeda
+            double valorConvertido = converterMoeda(option, valor);
+            if (valorConvertido != -1) {
+                System.out.println("Valor convertido: " + valorConvertido);
             } else {
                 System.out.println("Erro ao converter o valor. Tente novamente.");
             }
         }
     }
 
-    private static double convertCurrency(int option, double value) {
+    private static double converterMoeda(int opcao, double valor) {
         try {
             JsonObject rates = getExchangeRates();
             if (rates == null) {
                 return -1;
             }
 
-            double rate = 0.0;
-            switch (option) {
+            double cotacao = 0.0;
+
+            // selecionando a taxa de câmbio com base na opção escolhida
+            switch (opcao) {
                 case 1:
-                    rate = rates.get("BRL").getAsDouble();
+                    cotacao = rates.get("BRL").getAsDouble();
                     break;
                 case 2:
-                    rate = 1 / rates.get("BRL").getAsDouble();
+                    cotacao = 1 / rates.get("BRL").getAsDouble();
                     break;
                 case 3:
-                    rate = rates.get("BRL").getAsDouble() / rates.get("EUR").getAsDouble();
+                    cotacao = rates.get("BRL").getAsDouble() / rates.get("EUR").getAsDouble();
                     break;
                 case 4:
-                    rate = rates.get("EUR").getAsDouble() / rates.get("BRL").getAsDouble();
+                    cotacao = rates.get("EUR").getAsDouble() / rates.get("BRL").getAsDouble();
                     break;
                 case 5:
-                    rate = rates.get("BRL").getAsDouble() / rates.get("GBP").getAsDouble();
+                    cotacao = rates.get("BRL").getAsDouble() / rates.get("GBP").getAsDouble();
                     break;
                 case 6:
-                    rate = rates.get("GBP").getAsDouble() / rates.get("BRL").getAsDouble();
+                    cotacao = rates.get("GBP").getAsDouble() / rates.get("BRL").getAsDouble();
                     break;
                 default:
                     System.out.println("Opção inválida.");
                     return -1;
             }
-            return value * rate;
+            return valor * cotacao;
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
